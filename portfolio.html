@@ -120,6 +120,24 @@
             color: var(--muted);
         }
 
+        .card a {
+            display: inline-flex;
+            align-items: center;
+            min-height: 38px;
+            margin-top: 8px;
+            padding: 7px 12px;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            background: var(--accent);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .card a:hover {
+            filter: brightness(0.95);
+        }
+
         .skills {
             display: flex;
             flex-wrap: wrap;
@@ -227,6 +245,7 @@
                 <article class="card">
                     <h3>互動式頁面</h3>
                     <p>練習響應式版面、CSS 視覺設計與基本 JavaScript 互動。</p>
+                    <a href="game.html">開始玩小遊戲</a>
                 </article>
             </div>
         </section>

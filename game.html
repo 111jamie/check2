@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>接星星小遊戲</title>
+    <style>
+        :root {
+            --bg: #eef6ff;
+            --ink: #172033;
+            --muted: #5f6f86;
+            --panel: #ffffff;
+            --line: #d6e2f0;
+            --accent: #1d72d2;
+            --star: #f7b801;
+            --danger: #f45b69;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, "Microsoft JhengHei", sans-serif;
+            color: var(--ink);
+            background: var(--bg);
+        }
+
+        main {
+            width: min(920px, calc(100% - 28px));
+            margin: 0 auto;
+            padding: 28px 0;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        a {
+            color: var(--accent);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(28px, 5vw, 44px);
+            line-height: 1.1;
+        }
+
+        .game-shell {
+            display: grid;
+            grid-template-columns: 1fr 230px;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .stage-wrap,
+        .panel {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--panel);
+            box-shadow: 0 12px 28px rgba(23, 32, 51, 0.08);
+        }
+
+        .stage-wrap {
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            background:
+                radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.9), transparent 10%),
+                linear-gradient(180deg, #8ec5ff 0%, #dff1ff 62%, #d7f3d1 100%);
+            touch-action: none;
+        }
+
+        .panel {
+            padding: 16px;
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--line);
+            font-weight: 700;
+        }
+
+        .stat span:last-child {
+            color: var(--accent);
+        }
+
+        .help {
+            margin: 14px 0;
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            min-height: 44px;
+            border: 0;
+            border-radius: 8px;
+            color: #ffffff;
+            background: var(--accent);
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        button:hover {
+            filter: brightness(0.95);
+        }
+
+        .message {
+            min-height: 28px;
+            margin-top: 12px;
+            color: var(--danger);
+            font-weight: 700;
+        }
+
+        @media (max-width: 760px) {
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .game-shell {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div class="topbar">
+            <h1>接星星小遊戲</h1>
+            <a href="portfolio.html">回到作品簡介</a>
+        </div>
+
+        <section class="game-shell" aria-label="接星星小遊戲">
+            <div class="stage-wrap">
+                <canvas id="game" width="800" height="600" aria-label="遊戲畫面"></canvas>
+            </div>
+
+            <aside class="panel">
+                <div class="stat">
+                    <span>分數</span>
+                    <span id="score">0</span>
+                </div>
+                <div class="stat">
+                    <span>生命</span>
+                    <span id="lives">3</span>
+                </div>
+                <div class="stat">
+                    <span>最高分</span>
+                    <span id="best">0</span>
+                </div>
+                <p class="help">使用左右方向鍵移動籃子；手機或觸控板可以直接在遊戲畫面上拖曳。接到星星加分，漏接會扣生命。</p>
+                <button id="restart" type="button">重新開始</button>
+                <p class="message" id="message" aria-live="polite"></p>
+            </aside>
+        </section>
+    </main>
+
+    <script>
+        const canvas = document.getElementById("game");
+        const ctx = canvas.getContext("2d");
+        const scoreEl = document.getElementById("score");
+        const livesEl = document.getElementById("lives");
+        const bestEl = document.getElementById("best");
+        const messageEl = document.getElementById("message");
+        const restartBtn = document.getElementById("restart");
+
+        const state = {
+            score: 0,
+            lives: 3,
+            best: Number(localStorage.getItem("star-catcher-best") || 0),
+            running: true,
+            keys: new Set(),
+            basket: { x: 340, y: 540, w: 120, h: 30, speed: 8 },
+            stars: [],
+            frame: 0
+        };
+
+        bestEl.textContent = state.best;
+
+        function resetGame() {
+            state.score = 0;
+            state.lives = 3;
+            state.running = true;
+            state.stars = [];
+            state.frame = 0;
+            state.basket.x = (canvas.width - state.basket.w) / 2;
+            messageEl.textContent = "";
+            updateHud();
+        }
+
+        function updateHud() {
+            scoreEl.textContent = state.score;
+            livesEl.textContent = state.lives;
+            bestEl.textContent = state.best;
+        }
+
+        function spawnStar() {
+            const size = 18 + Math.random() * 12;
+            state.stars.push({
+                x: Math.random() * (canvas.width - size * 2) + size,
+                y: -size,
+                r: size,
+                speed: 2.2 + Math.random() * 2 + state.score * 0.025
+            });
+        }
+
+        function drawStar(star) {
+            const spikes = 5;
+            let rotation = Math.PI / 2 * 3;
+            let x = star.x;
+            let y = star.y;
+            const outer = star.r;
+            const inner = star.r / 2.4;
+
+            ctx.beginPath();
+            ctx.moveTo(x, y - outer);
+            for (let i = 0; i < spikes; i += 1) {
+                x = star.x + Math.cos(rotation) * outer;
+                y = star.y + Math.sin(rotation) * outer;
+                ctx.lineTo(x, y);
+                rotation += Math.PI / spikes;
+                x = star.x + Math.cos(rotation) * inner;
+                y = star.y + Math.sin(rotation) * inner;
+                ctx.lineTo(x, y);
+                rotation += Math.PI / spikes;
+            }
+            ctx.closePath();
+            ctx.fillStyle = "#f7b801";
+            ctx.fill();
+            ctx.strokeStyle = "#b77900";
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+
+        function drawBasket() {
+            const b = state.basket;
+            ctx.fillStyle = "#1d72d2";
+            ctx.fillRect(b.x, b.y, b.w, b.h);
+            ctx.fillStyle = "#1558a8";
+            ctx.fillRect(b.x + 10, b.y + b.h, b.w - 20, 14);
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(b.x + 18, b.y + 4);
+            ctx.lineTo(b.x + b.w - 18, b.y + 4);
+            ctx.stroke();
+        }
+
+        function intersects(star, basket) {
+            return star.x + star.r > basket.x &&
+                star.x - star.r < basket.x + basket.w &&
+                star.y + star.r > basket.y &&
+                star.y - star.r < basket.y + basket.h + 14;
+        }
+
+        function endGame() {
+            state.running = false;
+            state.best = Math.max(state.best, state.score);
+            localStorage.setItem("star-catcher-best", state.best);
+            messageEl.textContent = "遊戲結束，按重新開始再挑戰一次！";
+            updateHud();
+        }
+
+        function update() {
+            if (!state.running) {
+                return;
+            }
+
+            if (state.keys.has("ArrowLeft")) {
+                state.basket.x -= state.basket.speed;
+            }
+            if (state.keys.has("ArrowRight")) {
+                state.basket.x += state.basket.speed;
+            }
+
+            state.basket.x = Math.max(0, Math.min(canvas.width - state.basket.w, state.basket.x));
+            state.frame += 1;
+
+            if (state.frame % Math.max(28, 60 - Math.floor(state.score / 3)) === 0) {
+                spawnStar();
+            }
+
+            state.stars = state.stars.filter((star) => {
+                star.y += star.speed;
+
+                if (intersects(star, state.basket)) {
+                    state.score += 1;
+                    updateHud();
+                    return false;
+                }
+
+                if (star.y - star.r > canvas.height) {
+                    state.lives -= 1;
+                    updateHud();
+                    if (state.lives <= 0) {
+                        endGame();
+                    }
+                    return false;
+                }
+
+                return true;
+            });
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.55)";
+            ctx.fillRect(0, canvas.height - 42, canvas.width, 42);
+            state.stars.forEach(drawStar);
+            drawBasket();
+        }
+
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        window.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+                event.preventDefault();
+                state.keys.add(event.key);
+            }
+        });
+
+        window.addEventListener("keyup", (event) => {
+            state.keys.delete(event.key);
+        });
+
+        canvas.addEventListener("pointermove", (event) => {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            state.basket.x = (event.clientX - rect.left) * scaleX - state.basket.w / 2;
+            state.basket.x = Math.max(0, Math.min(canvas.width - state.basket.w, state.basket.x));
+        });
+
+        restartBtn.addEventListener("click", resetGame);
+
+        resetGame();
+        loop();
+    </script>
+</body>
+
+</html>
