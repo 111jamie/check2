@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>個人作品簡介</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f5f7fb;
+            --ink: #1f2937;
+            --muted: #667085;
+            --line: #d9e2ef;
+            --accent: #2563eb;
+            --accent-soft: #dbeafe;
+            --card: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, "Microsoft JhengHei", sans-serif;
+            color: var(--ink);
+            background: var(--bg);
+            line-height: 1.7;
+        }
+
+        .page {
+            width: min(960px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 48px 0;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 32px;
+            align-items: center;
+            padding-bottom: 28px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .eyebrow {
+            margin: 0 0 8px;
+            color: var(--accent);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        h1,
+        h2,
+        h3,
+        p {
+            margin-top: 0;
+        }
+
+        h1 {
+            margin-bottom: 12px;
+            font-size: clamp(34px, 5vw, 56px);
+            line-height: 1.1;
+        }
+
+        h2 {
+            margin-bottom: 16px;
+            font-size: 24px;
+        }
+
+        h3 {
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .intro {
+            max-width: 620px;
+            color: var(--muted);
+            font-size: 18px;
+        }
+
+        .avatar {
+            display: grid;
+            place-items: center;
+            width: 148px;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            color: var(--accent);
+            background: var(--accent-soft);
+            font-size: 42px;
+            font-weight: 700;
+            border: 8px solid var(--card);
+            box-shadow: 0 16px 32px rgba(31, 41, 55, 0.12);
+        }
+
+        .section {
+            padding: 32px 0;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .card {
+            min-height: 180px;
+            padding: 20px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--card);
+            box-shadow: 0 8px 20px rgba(31, 41, 55, 0.06);
+        }
+
+        .card p,
+        .timeline p {
+            color: var(--muted);
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .skills li {
+            padding: 8px 12px;
+            border-radius: 999px;
+            color: #1d4ed8;
+            background: var(--accent-soft);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .timeline {
+            display: grid;
+            gap: 16px;
+        }
+
+        .timeline article {
+            padding-left: 18px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .contact {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .contact a {
+            display: inline-flex;
+            align-items: center;
+            min-height: 42px;
+            padding: 8px 14px;
+            color: var(--ink);
+            text-decoration: none;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--card);
+        }
+
+        .contact a:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        @media (max-width: 720px) {
+            .page {
+                padding: 32px 0;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .avatar {
+                width: 112px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="page">
+        <section class="hero">
+            <div>
+                <p class="eyebrow">Portfolio</p>
+                <h1>你的姓名</h1>
+                <p class="intro">
+                    我是一位持續學習與創作的開發者，專注於把想法整理成清楚、實用且容易使用的數位作品。
+                    這裡收錄我的專案、技能與聯絡方式。
+                </p>
+            </div>
+            <div class="avatar" aria-label="個人頭像縮寫">YN</div>
+        </section>
+
+        <section class="section" aria-labelledby="about-title">
+            <h2 id="about-title">關於我</h2>
+            <p>
+                我喜歡觀察使用者需求，透過網頁設計、程式開發與資料整理，把問題拆解成可以執行的解法。
+                目前正在累積前端作品、GitHub 專案與個人品牌內容。
+            </p>
+        </section>
+
+        <section class="section" aria-labelledby="projects-title">
+            <h2 id="projects-title">作品精選</h2>
+            <div class="grid">
+                <article class="card">
+                    <h3>個人網站</h3>
+                    <p>建立自我介紹、作品列表與聯絡資訊，作為履歷與專案展示入口。</p>
+                </article>
+                <article class="card">
+                    <h3>資料整理工具</h3>
+                    <p>用簡單介面整理表單資料，減少重複操作並提升工作效率。</p>
+                </article>
+                <article class="card">
+                    <h3>互動式頁面</h3>
+                    <p>練習響應式版面、CSS 視覺設計與基本 JavaScript 互動。</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section" aria-labelledby="skills-title">
+            <h2 id="skills-title">技能</h2>
+            <ul class="skills">
+                <li>HTML</li>
+                <li>CSS</li>
+                <li>JavaScript</li>
+                <li>GitHub</li>
+                <li>RWD</li>
+                <li>UI 排版</li>
+            </ul>
+        </section>
+
+        <section class="section" aria-labelledby="experience-title">
+            <h2 id="experience-title">學習與經驗</h2>
+            <div class="timeline">
+                <article>
+                    <h3>網頁基礎</h3>
+                    <p>熟悉 HTML 結構、CSS 樣式與基本響應式設計。</p>
+                </article>
+                <article>
+                    <h3>版本控制</h3>
+                    <p>使用 Git 與 GitHub 管理作品，建立可追蹤的開發流程。</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section" aria-labelledby="contact-title">
+            <h2 id="contact-title">聯絡我</h2>
+            <div class="contact">
+                <a href="mailto:your.email@example.com">your.email@example.com</a>
+                <a href="https://github.com/111jamie">GitHub</a>
+                <a href="https://www.linkedin.com/">LinkedIn</a>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>
