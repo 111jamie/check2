@@ -4,17 +4,20 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>接星星小遊戲</title>
+    <title>星際快遞小遊戲</title>
     <style>
         :root {
-            --bg: #eef6ff;
-            --ink: #172033;
-            --muted: #5f6f86;
+            --bg: #f3f7fb;
+            --ink: #162235;
+            --muted: #607089;
             --panel: #ffffff;
-            --line: #d6e2f0;
-            --accent: #1d72d2;
-            --star: #f7b801;
-            --danger: #f45b69;
+            --line: #d8e2ef;
+            --blue: #2266d6;
+            --cyan: #10a6c8;
+            --gold: #f2a900;
+            --green: #1f9d67;
+            --red: #d94b55;
+            --space: #18213a;
         }
 
         * {
@@ -30,21 +33,32 @@
         }
 
         main {
-            width: min(920px, calc(100% - 28px));
+            width: min(1080px, calc(100% - 28px));
             margin: 0 auto;
-            padding: 28px 0;
+            padding: 26px 0;
         }
 
         .topbar {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: end;
             gap: 16px;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            margin: 0 0 6px;
+            font-size: clamp(30px, 5vw, 48px);
+            line-height: 1.05;
+        }
+
+        .subtitle {
+            margin: 0;
+            color: var(--muted);
         }
 
         a {
-            color: var(--accent);
+            color: var(--blue);
             font-weight: 700;
             text-decoration: none;
         }
@@ -53,38 +67,30 @@
             text-decoration: underline;
         }
 
-        h1 {
-            margin: 0;
-            font-size: clamp(28px, 5vw, 44px);
-            line-height: 1.1;
-        }
-
-        .game-shell {
+        .layout {
             display: grid;
-            grid-template-columns: 1fr 230px;
-            gap: 18px;
+            grid-template-columns: minmax(0, 1fr) 270px;
+            gap: 16px;
             align-items: start;
         }
 
-        .stage-wrap,
+        .stage,
         .panel {
             border: 1px solid var(--line);
             border-radius: 8px;
             background: var(--panel);
-            box-shadow: 0 12px 28px rgba(23, 32, 51, 0.08);
+            box-shadow: 0 14px 30px rgba(22, 34, 53, 0.08);
         }
 
-        .stage-wrap {
+        .stage {
             overflow: hidden;
         }
 
         canvas {
             display: block;
             width: 100%;
-            aspect-ratio: 4 / 3;
-            background:
-                radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.9), transparent 10%),
-                linear-gradient(180deg, #8ec5ff 0%, #dff1ff 62%, #d7f3d1 100%);
+            aspect-ratio: 16 / 10;
+            background: var(--space);
             touch-action: none;
         }
 
@@ -92,55 +98,110 @@
             padding: 16px;
         }
 
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
         .stat {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--line);
+            min-height: 72px;
+            padding: 10px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #f8fbff;
+        }
+
+        .stat span {
+            display: block;
+            color: var(--muted);
+            font-size: 13px;
             font-weight: 700;
         }
 
-        .stat span:last-child {
-            color: var(--accent);
+        .stat strong {
+            display: block;
+            margin-top: 5px;
+            color: var(--blue);
+            font-size: 24px;
+            line-height: 1;
         }
 
-        .help {
+        .meter {
             margin: 14px 0;
+        }
+
+        .meter-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
             color: var(--muted);
-            font-size: 15px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .meter-track {
+            height: 12px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #e8eef7;
+        }
+
+        .meter-fill {
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--cyan), var(--blue));
+        }
+
+        .actions {
+            display: grid;
+            gap: 10px;
+            margin: 16px 0;
         }
 
         button {
-            width: 100%;
             min-height: 44px;
             border: 0;
             border-radius: 8px;
             color: #ffffff;
-            background: var(--accent);
+            background: var(--blue);
             font: inherit;
             font-weight: 700;
             cursor: pointer;
         }
 
+        button.secondary {
+            color: var(--ink);
+            border: 1px solid var(--line);
+            background: #ffffff;
+        }
+
         button:hover {
-            filter: brightness(0.95);
+            filter: brightness(0.96);
+        }
+
+        .help {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
         }
 
         .message {
-            min-height: 28px;
-            margin-top: 12px;
-            color: var(--danger);
+            min-height: 24px;
+            margin: 12px 0 0;
+            color: var(--red);
             font-weight: 700;
         }
 
-        @media (max-width: 760px) {
+        @media (max-width: 840px) {
             .topbar {
                 align-items: flex-start;
                 flex-direction: column;
             }
 
-            .game-shell {
+            .layout {
                 grid-template-columns: 1fr;
             }
         }
@@ -150,30 +211,66 @@
 <body>
     <main>
         <div class="topbar">
-            <h1>接星星小遊戲</h1>
+            <div>
+                <h1>星際快遞</h1>
+                <p class="subtitle">收集包裹、補充能量、躲開隕石，把分數送到更遠的星區。</p>
+            </div>
             <a href="portfolio.html">回到作品簡介</a>
         </div>
 
-        <section class="game-shell" aria-label="接星星小遊戲">
-            <div class="stage-wrap">
-                <canvas id="game" width="800" height="600" aria-label="遊戲畫面"></canvas>
+        <section class="layout" aria-label="星際快遞遊戲">
+            <div class="stage">
+                <canvas id="game" width="960" height="600" aria-label="星際快遞遊戲畫面"></canvas>
             </div>
 
             <aside class="panel">
-                <div class="stat">
-                    <span>分數</span>
-                    <span id="score">0</span>
+                <div class="stats">
+                    <div class="stat">
+                        <span>分數</span>
+                        <strong id="score">0</strong>
+                    </div>
+                    <div class="stat">
+                        <span>最高分</span>
+                        <strong id="best">0</strong>
+                    </div>
+                    <div class="stat">
+                        <span>生命</span>
+                        <strong id="lives">3</strong>
+                    </div>
+                    <div class="stat">
+                        <span>關卡</span>
+                        <strong id="level">1</strong>
+                    </div>
                 </div>
-                <div class="stat">
-                    <span>生命</span>
-                    <span id="lives">3</span>
+
+                <div class="meter">
+                    <div class="meter-label">
+                        <span>能量</span>
+                        <span id="energyText">100%</span>
+                    </div>
+                    <div class="meter-track">
+                        <div class="meter-fill" id="energyFill"></div>
+                    </div>
                 </div>
-                <div class="stat">
-                    <span>最高分</span>
-                    <span id="best">0</span>
+
+                <div class="meter">
+                    <div class="meter-label">
+                        <span>連擊</span>
+                        <span id="comboText">x1</span>
+                    </div>
+                    <div class="meter-track">
+                        <div class="meter-fill" id="comboFill"></div>
+                    </div>
                 </div>
-                <p class="help">使用左右方向鍵移動籃子；手機或觸控板可以直接在遊戲畫面上拖曳。接到星星加分，漏接會扣生命。</p>
-                <button id="restart" type="button">重新開始</button>
+
+                <div class="actions">
+                    <button id="start" type="button">開始任務</button>
+                    <button class="secondary" id="restart" type="button">重新開始</button>
+                </div>
+
+                <p class="help">
+                    方向鍵或 WASD 移動，空白鍵衝刺。黃色包裹加分，藍色電池補能量，綠色護盾可抵擋一次撞擊，紅色隕石要避開。
+                </p>
                 <p class="message" id="message" aria-live="polite"></p>
             </aside>
         </section>
@@ -183,184 +280,423 @@
         const canvas = document.getElementById("game");
         const ctx = canvas.getContext("2d");
         const scoreEl = document.getElementById("score");
-        const livesEl = document.getElementById("lives");
         const bestEl = document.getElementById("best");
+        const livesEl = document.getElementById("lives");
+        const levelEl = document.getElementById("level");
+        const energyText = document.getElementById("energyText");
+        const energyFill = document.getElementById("energyFill");
+        const comboText = document.getElementById("comboText");
+        const comboFill = document.getElementById("comboFill");
         const messageEl = document.getElementById("message");
+        const startBtn = document.getElementById("start");
         const restartBtn = document.getElementById("restart");
 
+        const W = canvas.width;
+        const H = canvas.height;
+        const keys = new Set();
+        const pointer = { active: false, x: W / 2, y: H / 2 };
+
         const state = {
+            mode: "ready",
+            frame: 0,
             score: 0,
+            best: Number(localStorage.getItem("space-courier-best") || 0),
             lives: 3,
-            best: Number(localStorage.getItem("star-catcher-best") || 0),
-            running: true,
-            keys: new Set(),
-            basket: { x: 340, y: 540, w: 120, h: 30, speed: 8 },
-            stars: [],
-            frame: 0
+            level: 1,
+            energy: 100,
+            combo: 1,
+            comboTimer: 0,
+            shield: 0,
+            dashCooldown: 0,
+            shake: 0,
+            player: { x: 150, y: 300, r: 20, vx: 0, vy: 0 },
+            objects: [],
+            stars: []
         };
 
-        bestEl.textContent = state.best;
+        for (let i = 0; i < 90; i += 1) {
+            state.stars.push({
+                x: Math.random() * W,
+                y: Math.random() * H,
+                size: Math.random() * 2 + 0.8,
+                speed: Math.random() * 1.2 + 0.4
+            });
+        }
 
-        function resetGame() {
+        function reset() {
+            state.mode = "ready";
+            state.frame = 0;
             state.score = 0;
             state.lives = 3;
-            state.running = true;
-            state.stars = [];
-            state.frame = 0;
-            state.basket.x = (canvas.width - state.basket.w) / 2;
-            messageEl.textContent = "";
+            state.level = 1;
+            state.energy = 100;
+            state.combo = 1;
+            state.comboTimer = 0;
+            state.shield = 0;
+            state.dashCooldown = 0;
+            state.shake = 0;
+            state.player.x = 150;
+            state.player.y = H / 2;
+            state.player.vx = 0;
+            state.player.vy = 0;
+            state.objects = [];
+            messageEl.textContent = "按開始任務，準備起飛。";
             updateHud();
+        }
+
+        function start() {
+            if (state.mode === "gameover") {
+                reset();
+            }
+            if (state.mode !== "playing") {
+                state.mode = "playing";
+                messageEl.textContent = "";
+            }
         }
 
         function updateHud() {
             scoreEl.textContent = state.score;
-            livesEl.textContent = state.lives;
             bestEl.textContent = state.best;
+            livesEl.textContent = state.lives;
+            levelEl.textContent = state.level;
+            energyText.textContent = `${Math.round(state.energy)}%`;
+            energyFill.style.width = `${state.energy}%`;
+            comboText.textContent = `x${state.combo}`;
+            comboFill.style.width = `${Math.min(100, state.comboTimer / 90 * 100)}%`;
         }
 
-        function spawnStar() {
-            const size = 18 + Math.random() * 12;
-            state.stars.push({
-                x: Math.random() * (canvas.width - size * 2) + size,
-                y: -size,
+        function rand(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        function spawnObject() {
+            const roll = Math.random();
+            let type = "meteor";
+            if (roll > 0.76) type = "package";
+            if (roll > 0.9) type = "battery";
+            if (roll > 0.97) type = "shield";
+
+            const size = type === "meteor" ? rand(22, 38) : rand(18, 26);
+            state.objects.push({
+                type,
+                x: W + size,
+                y: rand(70, H - 70),
                 r: size,
-                speed: 2.2 + Math.random() * 2 + state.score * 0.025
+                speed: rand(3.2, 5.8) + state.level * 0.45,
+                wobble: rand(0, Math.PI * 2),
+                spin: rand(-0.05, 0.05)
             });
         }
 
-        function drawStar(star) {
-            const spikes = 5;
-            let rotation = Math.PI / 2 * 3;
-            let x = star.x;
-            let y = star.y;
-            const outer = star.r;
-            const inner = star.r / 2.4;
-
-            ctx.beginPath();
-            ctx.moveTo(x, y - outer);
-            for (let i = 0; i < spikes; i += 1) {
-                x = star.x + Math.cos(rotation) * outer;
-                y = star.y + Math.sin(rotation) * outer;
-                ctx.lineTo(x, y);
-                rotation += Math.PI / spikes;
-                x = star.x + Math.cos(rotation) * inner;
-                y = star.y + Math.sin(rotation) * inner;
-                ctx.lineTo(x, y);
-                rotation += Math.PI / spikes;
-            }
-            ctx.closePath();
-            ctx.fillStyle = "#f7b801";
-            ctx.fill();
-            ctx.strokeStyle = "#b77900";
-            ctx.lineWidth = 3;
-            ctx.stroke();
-        }
-
-        function drawBasket() {
-            const b = state.basket;
-            ctx.fillStyle = "#1d72d2";
-            ctx.fillRect(b.x, b.y, b.w, b.h);
-            ctx.fillStyle = "#1558a8";
-            ctx.fillRect(b.x + 10, b.y + b.h, b.w - 20, 14);
-            ctx.strokeStyle = "#ffffff";
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.moveTo(b.x + 18, b.y + 4);
-            ctx.lineTo(b.x + b.w - 18, b.y + 4);
-            ctx.stroke();
-        }
-
-        function intersects(star, basket) {
-            return star.x + star.r > basket.x &&
-                star.x - star.r < basket.x + basket.w &&
-                star.y + star.r > basket.y &&
-                star.y - star.r < basket.y + basket.h + 14;
-        }
-
-        function endGame() {
-            state.running = false;
+        function addScore(points) {
+            state.score += points * state.combo;
+            state.combo = Math.min(6, state.combo + 1);
+            state.comboTimer = 90;
+            state.level = Math.floor(state.score / 120) + 1;
             state.best = Math.max(state.best, state.score);
-            localStorage.setItem("star-catcher-best", state.best);
-            messageEl.textContent = "遊戲結束，按重新開始再挑戰一次！";
-            updateHud();
+            localStorage.setItem("space-courier-best", state.best);
         }
 
-        function update() {
-            if (!state.running) {
+        function hitPlayer() {
+            if (state.shield > 0) {
+                state.shield = 0;
+                state.shake = 10;
+                messageEl.textContent = "護盾擋下撞擊。";
                 return;
             }
 
-            if (state.keys.has("ArrowLeft")) {
-                state.basket.x -= state.basket.speed;
+            state.lives -= 1;
+            state.combo = 1;
+            state.comboTimer = 0;
+            state.shake = 18;
+            messageEl.textContent = "撞到隕石，生命減少。";
+            if (state.lives <= 0) {
+                state.mode = "gameover";
+                messageEl.textContent = "任務結束，按重新開始再挑戰。";
             }
-            if (state.keys.has("ArrowRight")) {
-                state.basket.x += state.basket.speed;
+        }
+
+        function dash() {
+            if (state.dashCooldown <= 0 && state.energy >= 20 && state.mode === "playing") {
+                state.energy -= 20;
+                state.dashCooldown = 46;
+                state.player.vx += 12;
+            }
+        }
+
+        function updatePlayer() {
+            const p = state.player;
+            let ax = 0;
+            let ay = 0;
+
+            if (keys.has("ArrowLeft") || keys.has("a")) ax -= 1;
+            if (keys.has("ArrowRight") || keys.has("d")) ax += 1;
+            if (keys.has("ArrowUp") || keys.has("w")) ay -= 1;
+            if (keys.has("ArrowDown") || keys.has("s")) ay += 1;
+
+            if (pointer.active) {
+                ax += (pointer.x - p.x) * 0.012;
+                ay += (pointer.y - p.y) * 0.012;
             }
 
-            state.basket.x = Math.max(0, Math.min(canvas.width - state.basket.w, state.basket.x));
+            p.vx = p.vx * 0.86 + ax * 0.85;
+            p.vy = p.vy * 0.86 + ay * 0.85;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.x = Math.max(34, Math.min(W - 34, p.x));
+            p.y = Math.max(46, Math.min(H - 46, p.y));
+        }
+
+        function updateGame() {
+            if (state.mode !== "playing") return;
+
             state.frame += 1;
-
-            if (state.frame % Math.max(28, 60 - Math.floor(state.score / 3)) === 0) {
-                spawnStar();
+            state.energy = Math.min(100, state.energy + 0.055);
+            state.dashCooldown = Math.max(0, state.dashCooldown - 1);
+            state.shield = Math.max(0, state.shield - 0.08);
+            state.shake = Math.max(0, state.shake - 1);
+            if (state.comboTimer > 0) {
+                state.comboTimer -= 1;
+            } else {
+                state.combo = 1;
             }
 
-            state.stars = state.stars.filter((star) => {
-                star.y += star.speed;
+            updatePlayer();
 
-                if (intersects(star, state.basket)) {
-                    state.score += 1;
-                    updateHud();
-                    return false;
-                }
+            const spawnRate = Math.max(18, 50 - state.level * 2);
+            if (state.frame % spawnRate === 0) {
+                spawnObject();
+            }
 
-                if (star.y - star.r > canvas.height) {
-                    state.lives -= 1;
-                    updateHud();
-                    if (state.lives <= 0) {
-                        endGame();
+            state.objects = state.objects.filter((obj) => {
+                obj.x -= obj.speed;
+                obj.y += Math.sin(state.frame * 0.035 + obj.wobble) * 0.8;
+                obj.wobble += obj.spin;
+
+                const dx = obj.x - state.player.x;
+                const dy = obj.y - state.player.y;
+                const dist = Math.hypot(dx, dy);
+                if (dist < obj.r + state.player.r) {
+                    if (obj.type === "meteor") {
+                        hitPlayer();
+                    } else if (obj.type === "package") {
+                        addScore(15);
+                        messageEl.textContent = "包裹送達，連擊提升。";
+                    } else if (obj.type === "battery") {
+                        state.energy = Math.min(100, state.energy + 28);
+                        addScore(5);
+                        messageEl.textContent = "能量補給完成。";
+                    } else {
+                        state.shield = 420;
+                        addScore(8);
+                        messageEl.textContent = "護盾啟動。";
                     }
                     return false;
                 }
 
-                return true;
+                return obj.x > -obj.r * 2;
             });
+
+            updateHud();
+        }
+
+        function drawBackground() {
+            ctx.fillStyle = "#18213a";
+            ctx.fillRect(0, 0, W, H);
+
+            for (const star of state.stars) {
+                star.x -= star.speed + state.level * 0.04;
+                if (star.x < 0) {
+                    star.x = W;
+                    star.y = Math.random() * H;
+                }
+                ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+                ctx.fillRect(star.x, star.y, star.size, star.size);
+            }
+
+            ctx.strokeStyle = "rgba(28, 166, 200, 0.24)";
+            ctx.lineWidth = 2;
+            for (let y = 80; y < H; y += 90) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(W, y - 30);
+                ctx.stroke();
+            }
+        }
+
+        function drawPlayer() {
+            const p = state.player;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.vy * 0.035);
+
+            if (state.shield > 0) {
+                ctx.strokeStyle = "rgba(31, 157, 103, 0.75)";
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.arc(0, 0, 33, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            ctx.fillStyle = "#ffffff";
+            ctx.beginPath();
+            ctx.moveTo(32, 0);
+            ctx.lineTo(-20, -20);
+            ctx.lineTo(-8, 0);
+            ctx.lineTo(-20, 20);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.fillStyle = "#2266d6";
+            ctx.beginPath();
+            ctx.ellipse(2, 0, 14, 9, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = "#f2a900";
+            ctx.beginPath();
+            ctx.moveTo(-22, -8);
+            ctx.lineTo(-40 - Math.random() * 8, 0);
+            ctx.lineTo(-22, 8);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        function drawObject(obj) {
+            ctx.save();
+            ctx.translate(obj.x, obj.y);
+            ctx.rotate(obj.wobble);
+
+            if (obj.type === "meteor") {
+                ctx.fillStyle = "#d94b55";
+                ctx.strokeStyle = "#7d2630";
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                for (let i = 0; i < 9; i += 1) {
+                    const angle = (Math.PI * 2 / 9) * i;
+                    const radius = obj.r * rand(0.72, 1);
+                    const x = Math.cos(angle) * radius;
+                    const y = Math.sin(angle) * radius;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            } else if (obj.type === "package") {
+                ctx.fillStyle = "#f2a900";
+                ctx.strokeStyle = "#9b6400";
+                ctx.lineWidth = 4;
+                ctx.fillRect(-obj.r, -obj.r * 0.8, obj.r * 2, obj.r * 1.6);
+                ctx.strokeRect(-obj.r, -obj.r * 0.8, obj.r * 2, obj.r * 1.6);
+                ctx.strokeStyle = "#fff2bd";
+                ctx.beginPath();
+                ctx.moveTo(0, -obj.r * 0.8);
+                ctx.lineTo(0, obj.r * 0.8);
+                ctx.stroke();
+            } else if (obj.type === "battery") {
+                ctx.fillStyle = "#10a6c8";
+                ctx.strokeStyle = "#075b70";
+                ctx.lineWidth = 4;
+                ctx.fillRect(-obj.r * 0.7, -obj.r, obj.r * 1.4, obj.r * 2);
+                ctx.strokeRect(-obj.r * 0.7, -obj.r, obj.r * 1.4, obj.r * 2);
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(-4, -obj.r * 0.55, 8, obj.r * 1.1);
+            } else {
+                ctx.strokeStyle = "#1f9d67";
+                ctx.lineWidth = 6;
+                ctx.beginPath();
+                ctx.arc(0, 0, obj.r, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.fillStyle = "#dff8eb";
+                ctx.beginPath();
+                ctx.arc(0, 0, obj.r * 0.45, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.restore();
+        }
+
+        function drawOverlay() {
+            if (state.mode === "ready" || state.mode === "gameover") {
+                ctx.fillStyle = "rgba(14, 23, 42, 0.62)";
+                ctx.fillRect(0, 0, W, H);
+                ctx.fillStyle = "#ffffff";
+                ctx.textAlign = "center";
+                ctx.font = "700 38px Arial, sans-serif";
+                ctx.fillText(state.mode === "ready" ? "星際快遞任務" : "任務結束", W / 2, H / 2 - 18);
+                ctx.font = "18px Arial, sans-serif";
+                ctx.fillText(state.mode === "ready" ? "按開始任務或空白鍵起飛" : `本次分數 ${state.score}，最高分 ${state.best}`, W / 2, H / 2 + 22);
+            }
         }
 
         function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(255, 255, 255, 0.55)";
-            ctx.fillRect(0, canvas.height - 42, canvas.width, 42);
-            state.stars.forEach(drawStar);
-            drawBasket();
+            ctx.save();
+            if (state.shake > 0) {
+                ctx.translate(rand(-state.shake, state.shake), rand(-state.shake, state.shake));
+            }
+
+            drawBackground();
+            state.objects.forEach(drawObject);
+            drawPlayer();
+            ctx.restore();
+            drawOverlay();
         }
 
         function loop() {
-            update();
+            updateGame();
             draw();
             requestAnimationFrame(loop);
         }
 
         window.addEventListener("keydown", (event) => {
-            if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+            const key = event.key.toLowerCase();
+            if (["arrowleft", "arrowright", "arrowup", "arrowdown", "w", "a", "s", "d", " "].includes(key)) {
                 event.preventDefault();
-                state.keys.add(event.key);
             }
+            if (event.code === "Space") {
+                if (state.mode === "ready") start();
+                else dash();
+            }
+            if (event.key.startsWith("Arrow")) {
+                keys.add(event.key);
+            }
+            keys.add(key);
         });
 
         window.addEventListener("keyup", (event) => {
-            state.keys.delete(event.key);
+            const key = event.key.toLowerCase();
+            if (event.key.startsWith("Arrow")) {
+                keys.delete(event.key);
+            }
+            keys.delete(key);
         });
 
-        canvas.addEventListener("pointermove", (event) => {
+        canvas.addEventListener("pointerdown", (event) => {
+            pointer.active = true;
+            movePointer(event);
+            start();
+        });
+
+        canvas.addEventListener("pointermove", movePointer);
+        canvas.addEventListener("pointerup", () => {
+            pointer.active = false;
+        });
+        canvas.addEventListener("pointerleave", () => {
+            pointer.active = false;
+        });
+
+        function movePointer(event) {
             const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            state.basket.x = (event.clientX - rect.left) * scaleX - state.basket.w / 2;
-            state.basket.x = Math.max(0, Math.min(canvas.width - state.basket.w, state.basket.x));
-        });
+            pointer.x = (event.clientX - rect.left) * (W / rect.width);
+            pointer.y = (event.clientY - rect.top) * (H / rect.height);
+        }
 
-        restartBtn.addEventListener("click", resetGame);
+        startBtn.addEventListener("click", start);
+        restartBtn.addEventListener("click", reset);
 
-        resetGame();
+        reset();
         loop();
     </script>
 </body>
